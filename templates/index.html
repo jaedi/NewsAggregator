@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>News Network</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js" integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous"></script>
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+    <script type="text/javascript" charset="utf-8">
+
+    (function() {
+            let news = document.querySelector("#news");
+            let title = document.querySelector("#title");
+            let source = document.querySelector("#source");
+            namespace = '/news';
+            var socket = io(namespace);
+
+            socket.on('connect', function() {
+                socket.emit('latest_news', {data: 'connected to the SocketServer...'});
+            });
+
+            socket.on('my_response', function(data, cb) {
+                console.log(data);
+                for(let i = 0; i < data.length; i++) {
+                       document.querySelector("#news").innerHTML += `
+
+
+
+  <div class="bg-white p-8 rounded-lg shadow-lg my-6">
+    <h2 class="text-2xl font-bold mb-2 text-gray-800" id="title">
+    ${data[i].title}
+    </h2>
+    <p class="text-gray-700">Source: ${data[i].source}</p>
+    <p class="mt-2">
+    <a href="${data[i].source}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" target="_blank">Read more...</a>
+    </p>
+  </div>
+                       `;
+                }
+
+
+                if (cb)
+                    cb();
+            });
+
+    })();
+
+
+</script>
+</head>
+<body>
+
+
+
+    <div id="news" class="p-20 bg-blue-100">
+
+        <h1 class="text-xl font-bold ">News Network</h1>
+        <p class="text-sm">Keep Track of Latest News Today.</p>
+        <p>Async mode is: <b>{{ async_mode }}</b></p>
+
+        <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
+    </div>
+
+
+</body>
+</html>
